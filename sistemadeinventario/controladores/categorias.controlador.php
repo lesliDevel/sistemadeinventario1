@@ -221,67 +221,77 @@ static public function ctrMostrarCategorias($item,$valor){ //estas dos variables
 
 	static public function crtBorrarCategorias(){
 
+	if($_SESSION['perfil'] == "Admin"){
+			if(isset($_GET["idCategoria"])){ //le decimos que si obtenemos idUsuario,que es cuando damos en el boton eliminar,entonces que ejeciute lo siguiente:
 
-	if(isset($_GET["idCategoria"])){ //le decimos que si obtenemos idUsuario,que es cuando damos en el boton eliminar,entonces que ejeciute lo siguiente:
+				$tabla = "categorias"; //metemos el nombre de la tabla en esta variable
 
-		$tabla = "categorias"; //metemos el nombre de la tabla en esta variable
+				$datos = $_GET['idCategoria']; //decimos que la variable datos es igual a get idUsuarios,asi que aqui lo que hacemos es obtener el id del usuario que vamos a eliminar y lo almacenamos en esta variable llamada datos
 
-		$datos = $_GET['idCategoria']; //decimos que la variable datos es igual a get idUsuarios,asi que aqui lo que hacemos es obtener el id del usuario que vamos a eliminar y lo almacenamos en esta variable llamada datos
+				$respuesta = ModeloCategorias::mdlBorrarCategorias($tabla,$datos); //y aqui en la variable respuesta,lo que vamos a hacer es llamar a la clase ModeloUsuarios,en la que esta la funcion mdlBorrarUsuarios,a la cual vamos a mandarle los parametros tabla,que contiene el nombre de la tabla y datos,que contiene el id del usuarios que vamos a eliminar
 
-		$respuesta = ModeloCategorias::mdlBorrarCategorias($tabla,$datos); //y aqui en la variable respuesta,lo que vamos a hacer es llamar a la clase ModeloUsuarios,en la que esta la funcion mdlBorrarUsuarios,a la cual vamos a mandarle los parametros tabla,que contiene el nombre de la tabla y datos,que contiene el id del usuarios que vamos a eliminar
+				if($respuesta=="ok"){ //en el caso de que si se logre completar la accion correctamente saldra este mensaje en pantalla:
+						//alert("la respuesta es:".$respuesta);
+						 //echo Console::log($respuesta);
+						  //echo "Usuario modificado";
+						//echo "La respuesta es".$respuesta;
+						//redireccionamos a el usuario a la pagina usuarios,para asi lograr que la pagina se refresque,de esta manera evitando el error en el que solo se ve la tabla y permitiendo que no sea para el usuario necesario refrescar la pagina manualmente para ver la edicion de los registros.
+						  //echo "<script>window.location.href = 'controladores/mialertaeditar.php'</script>";
+					 		//echo "Usuario eliminado";
+					 		//echo "<script>window.location.href = 'usuarios'</script>";
+							echo '<script>
 
-		if($respuesta=="ok"){ //en el caso de que si se logre completar la accion correctamente saldra este mensaje en pantalla:
-				//alert("la respuesta es:".$respuesta);
-				 //echo Console::log($respuesta);
-				  //echo "Usuario modificado";
-				//echo "La respuesta es".$respuesta;
-				//redireccionamos a el usuario a la pagina usuarios,para asi lograr que la pagina se refresque,de esta manera evitando el error en el que solo se ve la tabla y permitiendo que no sea para el usuario necesario refrescar la pagina manualmente para ver la edicion de los registros.
-				  //echo "<script>window.location.href = 'controladores/mialertaeditar.php'</script>";
-			 		//echo "Usuario eliminado";
-			 		//echo "<script>window.location.href = 'usuarios'</script>";
-					echo '<script>
+										swal({
+		                icon: "success",
+		                title: "Buen trabajo!",
+		                text: "La categoria ha sido eliminada con exito!"
+		                
 
-								swal({
-                icon: "success",
-                title: "Buen trabajo!",
-                text: "La categoria ha sido eliminada con exito!"
-                
+		              }).then(function() { 
+		                window.location.href = "categorias"; 
+		            });
 
-              }).then(function() { 
-                window.location.href = "categorias"; 
-            });
+									</script>';
 
-							</script>';
+					}else{ 
+						//alert("$respuesta");
+						 //echo Console::log($respuesta);
+						 //echo "Usuario no modificado";
+						//echo "$respuesta";
+							//echo "<script>window.location.href = 'controladores/mialertaeditarerror.php'</script>";
+						//echo "Usuario no eliminado";
+						//echo "<script>window.location.href = 'usuarios'</script>";
+						echo '<script>
 
-			}else{ 
-				//alert("$respuesta");
-				 //echo Console::log($respuesta);
-				 //echo "Usuario no modificado";
-				//echo "$respuesta";
-					//echo "<script>window.location.href = 'controladores/mialertaeditarerror.php'</script>";
-				//echo "Usuario no eliminado";
-				//echo "<script>window.location.href = 'usuarios'</script>";
-				echo '<script>
+										swal({
+		                icon: "error",
+		                title: "opss!",
+		                text: "No se pudo eliminar el registro de manera exitosa!"
+		                
 
-								swal({
-                icon: "error",
-                title: "opss!",
-                text: "No se pudo eliminar el registro de manera exitosa!"
-                
+		              }).then(function() { 
+		                window.location.href = "categorias"; 
+		            });
 
-              }).then(function() { 
-                window.location.href = "categorias"; 
-            });
-
-							</script>';
-				
-				
-				}
-
-
+									</script>';
+						
+						
+						}
 
 
-		}
+
+
+				 }
+
+	 }else{
+			echo '<script>
+				     swal({
+					 title: "Recordatorio",
+					 text: "!!Solo el Admin puede eliminar categorias!!",
+					 icon: "warning"
+								});
+						</script>';
+					}
 
 
 	}

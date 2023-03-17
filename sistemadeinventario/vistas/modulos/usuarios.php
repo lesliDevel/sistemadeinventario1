@@ -75,6 +75,10 @@
 
                       <button class='btn btn-danger btnEliminarUsuario'idUsuario = ".$valores["id"]." >Eliminar</button>
 
+                      <button class='button btnEditarContrasena' idUsuario = ".$valores["id"]." data-toggle='modal' data-target='#modalEditarContrasena'>🔑</button>
+
+
+
 
                       </td>
 
@@ -294,7 +298,7 @@
                   
                   <span class = "input-group-addon"><i class="fa fa-key"></i></span>
 
-                  <input type="password" class ="form-control input-lg " name="editarPassword">
+                  <input type="password" class ="form-control input-lg " name="validacionPassword" placeholder="Ingresar contraseña para validar la identidad del usuario">
 
                 </div>
 
@@ -323,6 +327,8 @@
 
           <div class="modal-footer">
 
+            <!-- <button class= "btn btn-primary" data-toggle="modal" data-target="#modalEditarClave">Editar contraseña</button> -->
+            
             <button type="button" class="btn btn-default" data-dismiss="modal">Salir</button>
             
             <button type="submit" class="btn btn-primary">Editar Usuario</button>
@@ -352,6 +358,100 @@
 
 
   </div>
+
+<!--MODAL EDITAR CONTRASEÑA -->
+
+    <div  id = "modalEditarContrasena" class ="modal fade" role ="dialog">
+    
+    <div class ="modal-dialog">
+      
+      <div class ="modal-content">
+        
+        <form rool ="form" method="post">
+          
+          <div class="modal-header">
+            
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+
+            <h4 class="modal-title">Editar Contraseña</h4>
+
+          </div>
+
+          <!--MAQUETACION: -->
+
+          <div class="modal-body">
+            
+            <div class="box-body">
+
+
+              <!--CAMPO OCULTO -->
+
+               <div class="form-group">
+                
+                <div class="input-group">
+
+                  <input type="hidden" class = "form-control input-lg " name="idC" id="idC">
+
+                </div>
+
+              </div>
+
+
+              <div class="form-group">
+                
+                <div class="input-group">
+                  
+                  <span class = "input-group-addon"><i class="fa fa-key"></i></span>
+
+                  <input type="password" class ="form-control input-lg " name="editarPassword" placeholder="Ingrese la nueva contraseña">
+
+                </div>
+
+              </div>
+
+              
+            </div>
+
+
+          </div>
+
+
+          <div class="modal-footer">
+
+           
+
+            <button type="button" class="btn btn-default" data-dismiss="modal">Salir</button>
+            
+            <button type="submit" class="btn btn-primary">Editar Contraseña</button>
+
+          </div>
+
+
+        </form>
+
+        <?php
+
+        
+
+        $editarContrasena=new ControladorUsuarios(); //llamamos a la clase ControladorUsuarios,la cual contiene a la funcion ctrCrearUsuarios,la cual vamos a llamar desde aca.
+        
+        $editarContrasena->ctrEditarContrasena(); //llamamos a la funcion ctrEditarUsuarios,la cual se encargara de hacer todo el proceso,luego llamara la funcion mdlGuardarUsuarios que esta en la clase ModeloUsuarios,la cual se encargara de hacer la conexion y de guardar la informacion en la base de datos.
+      
+
+        ?>
+
+
+      </div>
+
+
+    </div>
+
+
+
+  </div>
+
+
+
 
 
   <?php

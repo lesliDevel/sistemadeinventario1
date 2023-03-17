@@ -1,4 +1,3 @@
-
 <?php
 
 //include 'controladores/myalert.php'; 
@@ -20,7 +19,7 @@ class ControladorUsuarios{
 
 					$item = "usuario"; //item
 
-					$valor = $_POST['ingresoUsuario']; //el valor que viene siendo el formulario que estamos enviando
+					$valor = $_POST['ingresoUsuario']; //el valor que viene siendo el usuario ingresado a el formulario
 
 					$respuesta = ModeloUsuarios::mdlMostrarUsuarios($tabla,$item,$valor); //aqui lo que hacemos es llamar a la funcion ctrMostrarUsuarios y le mandamos los parametros item y el parametro valor,que contiene el formulario.Lo que hara esto sera que ira a ctrMostrarUsuarios,que a su vez llamara a la funcion mdlMostrarUsuarios,a la cual se le pasaran los parametros tabla,item y valor,con los cuales hara la consulta usando el item para buscar con el la fila o el registro que coincide con el item,una vez que encuentre el registro que coincide,lo trae para aca y lo compara con los datos que nosotros estamos enviando por el formulario,en este caso,el usuario y la password
 
@@ -39,11 +38,9 @@ class ControladorUsuarios{
 						$_SESSION['perfil'] = $respuesta["perfil"];
 
 						echo "<script>
-
 								
                 window.location = 'index.php'; 
             
-
 							</script>";
 
 
@@ -75,84 +72,96 @@ class ControladorUsuarios{
 //NOTA:Para el error de sql,que no me deja agregar ningun usuario,solo debemos ir a sql,cambiamos id por ID,guardamos los cambios,luego volvemos a cambir a "id",y ahi estara funcionando bien.
 
 	static public function ctrCrearUsuarios(){
+		//$tabla = "usuarios";
 
-		if (isset($_POST['usuario'])) { //en este if,ponemos la condicion de que si se esta enviando la informacion del formulario,la cual se esta enviando por medio de un post,que se ejecute el siguiente codigo:
+		//$item = "perfil"; //item
 
-			$tabla = "usuarios"; //en esta variable guardamos el nombre de la tabla en la que se almacenara la informacion del registro que estamos enviando
+		//$valor = "perfil";
 
-			$encriptar = crypt($_POST["password"],'lgLK6A2NyAvNB+Ehl1FZYrPQJf9MGLYO9jKlZljBQ18'); //ESTO VA A ENCRIPTAR la contraseña,tambien pasamos la cadena de caracteres con las que yo quiero que se encripten las contraseñas de nuestra aplicacion web
+		//$validacionperfil = ModeloUsuarios::mdlMostrarUsuarios($tabla,$item,$valor);
 
-			//AQUI CREAMOS UN ARRAY,que se va a llenar con la informacion enviada por el formulario
-			$datos = array( 'nombre' => $_POST['nombre'],
-							'usuario' => $_POST['usuario'],
-							'password' => $encriptar,
-							'perfil' => $_POST['perfil']);
+		if($_SESSION['perfil'] == "Admin"){ //validamos si perfil es igual a Admin para darle los privilegios de realizar esta accion,de lo contrario,no podra hacerlo,ya que este privilegio solo lo puede tener un Admin
+					if (isset($_POST['usuario'])) { //en este if,ponemos la condicion de que si se esta enviando la informacion del formulario,la cual se esta enviando por medio de un post,que se ejecute el siguiente codigo:
 
-			//var_dump($datos);
+						$tabla = "usuarios"; //en esta variable guardamos el nombre de la tabla en la que se almacenara la informacion del registro que estamos enviando
 
-			$respuesta = ModeloUsuarios::mdlGuardarUsuarios($tabla,$datos); //todo esto lo mandaremos por medio de la variable respuesta a la funcion mdlGuardarUsuarios,que se encuentra en la clase ModeloUsuarios,le mandamos a esa funcion las variables tabla,que contiene el nombre de la tabla que esta en la base de datos en donde se va a guardar la informacion y la variable datos que contiene el array en el que se van a almacenar todos los datos del registro,esas variabes seran los parametros de la funcion mdlGuardarUsuarios,alla en esa funcion seran recibidas por variables con el mismo nombre en la seccion de parametros de esa funcion o metodo.
+						$encriptar = crypt($_POST["password"],'lgLK6A2NyAvNB+Ehl1FZYrPQJf9MGLYO9jKlZljBQ18'); //ESTO VA A ENCRIPTAR la contraseña,tambien pasamos la cadena de caracteres con las que yo quiero que se encripten las contraseñas de nuestra aplicacion web
 
+						//AQUI CREAMOS UN ARRAY,que se va a llenar con la informacion enviada por el formulario
+						$datos = array( 'nombre' => $_POST['nombre'],
+										'usuario' => $_POST['usuario'],
+										'password' => $encriptar,
+										'perfil' => $_POST['perfil']);
 
-			if($respuesta == "ok"){ //en el caso de que si se logre completar la accion correctamente saldra este mensaje en pantalla:
+						//var_dump($datos);
 
-				//echo "Usuario registrado";
-				//redireccionamos a el usuario a la pagina usuarios,para asi lograr que la pagina se refresque,de esta manera evitando el error en el que solo se ve la tabla y permitiendo que no sea para el usuario necesario refrescar la pagina manualmente para ver los nuevos registros.
-				//echo "$respuesta";
-				//echo '<script>', 'alertagregar();', '</script>';
-				 //echo "onload='alertagregar()'";
-				//alertagregar();
-				 
-				
-				//<body onload="alertagregar();">
-				//echo "<script>window.location.href = 'controladores/mialerta.php'</script>";
-				echo '<script>
-
-								swal({
-                icon: "success",
-                title: "Buen trabajo!",
-                text: "Usuario registrado con exito!"
-                
-
-              }).then(function() { 
-                window.location.href = "usuarios"; 
-            });
-
-							</script>';
-				
-				
-
-			}else{ //DE LO CONTRARIO,se imprimira este mensaje
-				 	//echo "$respuesta";
-				 //echo '<script>', 'alerterroragregar();', '</script>';
-				  //echo "onload='alerterroragregar()'";
-				//alerterroragregar();
-				//echo "<script>window.location.href = 'usuarios'</script>";
-				//echo "window.location.href="./index.php";
-				
-				//<body onload="alerterroragregar();">
-				//echo "<script>window.location.href = 'controladores/mialertaerror.php'</script>";
-				echo '<script>
-
-								swal({
-                icon: "error",
-                title: "Oops...!",
-                text: "No se pudo realizar el registro exitosamente,verifique que el usuario no sea igual a uno que ya este registrado!"
-                
-
-              }).then(function() { 
-                window.location.href = "usuarios"; 
-            });
-
-							</script>';
-					
-			}
+						$respuesta = ModeloUsuarios::mdlGuardarUsuarios($tabla,$datos); //todo esto lo mandaremos por medio de la variable respuesta a la funcion mdlGuardarUsuarios,que se encuentra en la clase ModeloUsuarios,le mandamos a esa funcion las variables tabla,que contiene el nombre de la tabla que esta en la base de datos en donde se va a guardar la informacion y la variable datos que contiene el array en el que se van a almacenar todos los datos del registro,esas variabes seran los parametros de la funcion mdlGuardarUsuarios,alla en esa funcion seran recibidas por variables con el mismo nombre en la seccion de parametros de esa funcion o metodo.
 
 
+						if($respuesta == "ok"){ //en el caso de que si se logre completar la accion correctamente saldra este mensaje en pantalla:
 
-			
+							//echo "Usuario registrado";
+							//redireccionamos a el usuario a la pagina usuarios,para asi lograr que la pagina se refresque,de esta manera evitando el error en el que solo se ve la tabla y permitiendo que no sea para el usuario necesario refrescar la pagina manualmente para ver los nuevos registros.
+							//echo "$respuesta";
+							//echo '<script>', 'alertagregar();', '</script>';
+							 //echo "onload='alertagregar()'";
+							//alertagregar();
+							 
+							
+							//<body onload="alertagregar();">
+							//echo "<script>window.location.href = 'controladores/mialerta.php'</script>";
+							echo '<script>
+											swal({
+			                icon: "success",
+			                title: "Buen trabajo!",
+			                text: "Usuario registrado con exito!"
+			                
+			              }).then(function() { 
+			                window.location.href = "usuarios"; 
+			            });
+										</script>';
+							
+							
 
-		}
+						}else{ //DE LO CONTRARIO,se imprimira este mensaje
+							 	//echo "$respuesta";
+							 //echo '<script>', 'alerterroragregar();', '</script>';
+							  //echo "onload='alerterroragregar()'";
+							//alerterroragregar();
+							//echo "<script>window.location.href = 'usuarios'</script>";
+							//echo "window.location.href="./index.php";
+							
+							//<body onload="alerterroragregar();">
+							//echo "<script>window.location.href = 'controladores/mialertaerror.php'</script>";
+							echo '<script>
+											swal({
+			                icon: "error",
+			                title: "Oops...!",
+			                text: "No se pudo realizar el registro exitosamente,verifique que el usuario no sea igual a uno que ya este registrado!"
+			                
+			              }).then(function() { 
+			                window.location.href = "usuarios"; 
+			            });
+										</script>';
+								
+						}
 
+
+
+						
+
+					}
+
+
+						}else{
+						echo '<script>
+											swal({
+														title: "Recordatorio",
+														text: "!!Recuerde que solo el Admin puede crear usuarios!!",
+														icon: "warning"
+																});
+														</script>';
+					}
 
 
 
@@ -189,7 +198,131 @@ static public function ctrMostrarUsuarios($item,$valor){ //estas dos variables s
 
 	static public function ctrEditarUsuarios(){
 
+		if($_SESSION['perfil'] == "Admin"){
+
 		if (isset($_POST['editarUsuario'])) { //en este if,ponemos la condicion de que si se esta enviando la informacion del formulario,la cual se esta enviando por medio de un post,que se ejecute el siguiente codigo:
+			
+			//$editar = AjaxUsuarios::AjaxEditarUsuarios();
+
+			$tabla = "usuarios"; //en esta variable guardamos el nombre de la tabla en la que se almacenara la informacion del registro que estamos enviando
+			//alert("El nombre de la tabla es".$tabla);
+			//echo "$tabla";
+			//echo Console::log('Elnombredelatablaes',$tabla);
+
+			$encriptar = crypt($_POST["validacionPassword"],'lgLK6A2NyAvNB+Ehl1FZYrPQJf9MGLYO9jKlZljBQ18'); //ESTO VA A ENCRIPTAR la contraseña,tambien pasamos la cadena de caracteres con las que yo quiero que se encripten las contraseñas de nuestra aplicacion web
+
+			//AQUI CREAMOS UN ARRAY,que se va a llenar con la informacion enviada por el formulario
+			
+			//if ('password' === " " ) { //si password es igual a vacio,entonces que ejecute
+				
+			//}
+			
+			$datos= array(	'id' => $_POST['id'],
+							'nombre' => $_POST['editarNombre'],
+							'usuario' => $_POST['editarUsuario'],
+							'password' => $encriptar,
+							'perfil' => $_POST['editarPerfil']);
+			var_dump($datos);
+
+			//$tabla = "usuarios";
+
+			$item = "id";
+
+			$valor = $_POST['id']; 
+
+			//VALIDACION CLAVE: Lo que hacemos aqui es validar por medio de la funcion mdlMostrarUsuarios la contraseña ingresa en el campo de contraseña,si la contraseña es correcta,procede a enviarse la informacion y se hace la edicion,si no es lo es,salta un mensaje de error
+			$validacionclave = ModeloUsuarios::mdlMostrarUsuarios($tabla,$item,$valor);//le enviamos los parametros tabla,que sera la tabla en la que se debe hacer la consulta,el parametro item que es el id,recordemos que el parametro item es el que va a usar la funcion para buscar entre los registros al que coincida,es decir el que va a usar como punto de comparacion,luego retorna la respuesta y aca comparamos si los datos son correctos o no
+
+				if ($validacionclave["id"] == $_POST["id"] && $validacionclave["password"] == $encriptar){ //aqui validamos que la contraseña sea correcta,es decir,que sea la contraseña del usuario,de lo contrario,el formulario no se va a enviar,ahora ya el campo de contraseña no serviria para cambiarla,si no mas bien para validar la identidad de quien hace el la edicion del usuario,decimos que si id,que es el que traemos de la base de datos es igual a el id del post id,osea,el id que se esta enviando por el formulario (recordemos que el id si esta presente en el formulario,solo que esta oculto),entonces es correcto y ademas,validamos que si la password que se esta enviando por el formulario es igual a la password de la base de datos,entonecs que ejecute el codigo que esta entre las llaves de este if,que es el siguiente:
+							//alert($datos);
+							//echo Console::log($datos);
+							//echo "[$datos]";
+							 
+
+							$respuesta= ModeloUsuarios::mdlEditarUsuarios($tabla,$datos); //todo esto lo mandaremos por medio de la variable respuesta a la funcion mdlEditarUsuarios,que se encuentra en la clase ModeloUsuarios,le mandamos a esa funcion las variables tabla,que contiene el nombre de la tabla que esta en la base de datos en donde se va a guardar la informacion y la variable datos que contiene el array en el que se van a almacenar todos los datos del que mandamos ya editados,esas variabes seran los parametros de la funcion mdlEditarUsuarios,alla en esa funcion seran recibidas por variables con el mismo nombre en la seccion de parametros de esa funcion o metodo.
+
+
+							if($respuesta=="ok"){ //en el caso de que si se logre completar la accion correctamente saldra este mensaje en pantalla:
+								//alert("la respuesta es:".$respuesta);
+								 //echo Console::log($respuesta);
+								  //echo "Usuario modificado";
+								//echo "La respuesta es".$respuesta;
+								//redireccionamos a el usuario a la pagina usuarios,para asi lograr que la pagina se refresque,de esta manera evitando el error en el que solo se ve la tabla y permitiendo que no sea para el usuario necesario refrescar la pagina manualmente para ver la edicion de los registros.
+								  //echo "<script>window.location.href = 'controladores/mialertaeditar.php'</script>";
+								echo '<script>
+												swal({
+				                icon: "success",
+				                title: "Buen trabajo!",
+				                text: "El usuario ha sido modificado correctamente!"
+				                
+				              }).then(function() { 
+		                window.location.href = "usuarios"; 
+		            			});
+											</script>';
+								
+
+							}else{ 
+								//alert("$respuesta");
+								 //echo Console::log($respuesta);
+								 //echo "Usuario no modificado";
+								//echo "$respuesta";
+									//echo "<script>window.location.href = 'controladores/mialertaeditarerror.php'</script>";
+								echo '<script>
+												swal({
+				                icon: "error",
+				                title: "Oops...!",
+				                text: "No se pudo modificar el registro exitosamente,verifique que el usuario no sea igual a uno que ya este registrado!"
+				                
+				              }).then(function() { 
+		                window.location.href = "usuarios"; 
+		            			});
+											</script>';
+								
+								
+								
+								
+							 }
+
+		}else{
+			echo '<script>
+										swal({
+		                icon: "error",
+		                title: "Oops...!",
+		                text: "No se pudo modificar el registro exitosamente,verifique que la contraseña sea correcta!"
+		                
+		              }).then(function() { 
+		                window.location.href = "usuarios"; 
+		            			});
+									</script>';
+		}
+
+
+
+			
+
+	}
+
+
+  }else{
+			echo '<script>
+				     swal({
+					 title: "Recordatorio",
+					 text: "!!Accion solo permitida para Admins!!",
+					 icon: "warning"
+								});
+						</script>';
+					}
+
+
+
+}
+
+
+static public function ctrEditarContrasena(){
+
+		
+		if($_SESSION['perfil'] == "Admin"){
+		if (isset($_POST['editarPassword'])) { //en este if,ponemos la condicion de que si se esta enviando la informacion del formulario,la cual se esta enviando por medio de un post,que se ejecute el siguiente codigo:
 			
 			//$editar = AjaxUsuarios::AjaxEditarUsuarios();
 
@@ -201,78 +334,82 @@ static public function ctrMostrarUsuarios($item,$valor){ //estas dos variables s
 			$encriptar = crypt($_POST["editarPassword"],'lgLK6A2NyAvNB+Ehl1FZYrPQJf9MGLYO9jKlZljBQ18'); //ESTO VA A ENCRIPTAR la contraseña,tambien pasamos la cadena de caracteres con las que yo quiero que se encripten las contraseñas de nuestra aplicacion web
 
 			//AQUI CREAMOS UN ARRAY,que se va a llenar con la informacion enviada por el formulario
-			$datos= array(	'id' => $_POST['id'],
-							'nombre' => $_POST['editarNombre'],
-							'usuario' => $_POST['editarUsuario'],
-							'password' => $encriptar,
-							'perfil' => $_POST['editarPerfil']);
-			//alert($datos);
-			//echo Console::log($datos);
-			//echo "[$datos]";
-			//var_dump($datos);
-
-			$respuesta= ModeloUsuarios::mdlEditarUsuarios($tabla,$datos); //todo esto lo mandaremos por medio de la variable respuesta a la funcion mdlEditarUsuarios,que se encuentra en la clase ModeloUsuarios,le mandamos a esa funcion las variables tabla,que contiene el nombre de la tabla que esta en la base de datos en donde se va a guardar la informacion y la variable datos que contiene el array en el que se van a almacenar todos los datos del que mandamos ya editados,esas variabes seran los parametros de la funcion mdlEditarUsuarios,alla en esa funcion seran recibidas por variables con el mismo nombre en la seccion de parametros de esa funcion o metodo.
-
-
-			if($respuesta=="ok"){ //en el caso de que si se logre completar la accion correctamente saldra este mensaje en pantalla:
-				//alert("la respuesta es:".$respuesta);
-				 //echo Console::log($respuesta);
-				  //echo "Usuario modificado";
-				//echo "La respuesta es".$respuesta;
-				//redireccionamos a el usuario a la pagina usuarios,para asi lograr que la pagina se refresque,de esta manera evitando el error en el que solo se ve la tabla y permitiendo que no sea para el usuario necesario refrescar la pagina manualmente para ver la edicion de los registros.
-				  //echo "<script>window.location.href = 'controladores/mialertaeditar.php'</script>";
-				echo '<script>
-
-								swal({
-                icon: "success",
-                title: "Buen trabajo!",
-                text: "El usuario ha sido modificado correctamente!"
-                
-
-              }).then(function() { 
-                window.location.href = "usuarios"; 
-            });
-
-							</script>';
+			
+			//if ('password' === " " ) { //si password es igual a vacio,entonces que ejecute
 				
+			//}
+			
+			$datos= array('id' => $_POST['idC'], 
+									'password' => $encriptar);
 
-			}else{ 
-				//alert("$respuesta");
-				 //echo Console::log($respuesta);
-				 //echo "Usuario no modificado";
-				//echo "$respuesta";
-					//echo "<script>window.location.href = 'controladores/mialertaeditarerror.php'</script>";
-				echo '<script>
+			var_dump($datos);
 
-								swal({
-                icon: "error",
-                title: "Oops...!",
-                text: "No se pudo modificar el registro exitosamente,verifique que el usuario no sea igual a uno que ya este registrado!"
-                
+							$respuesta= ModeloUsuarios::mdlEditarContrasena($tabla,$datos); //todo esto lo mandaremos por medio de la variable respuesta a la funcion mdlEditarUsuarios,que se encuentra en la clase ModeloUsuarios,le mandamos a esa funcion las variables tabla,que contiene el nombre de la tabla que esta en la base de datos en donde se va a guardar la informacion y la variable datos que contiene el array en el que se van a almacenar todos los datos del que mandamos ya editados,esas variabes seran los parametros de la funcion mdlEditarUsuarios,alla en esa funcion seran recibidas por variables con el mismo nombre en la seccion de parametros de esa funcion o metodo.
 
-              }).then(function() { 
-                window.location.href = "usuarios"; 
-            });
 
-							</script>';
-				
-				
-				
-				
-			}
+							if($respuesta=="ok"){ //en el caso de que si se logre completar la accion correctamente saldra este mensaje en pantalla:
+								//alert("la respuesta es:".$respuesta);
+								 //echo Console::log($respuesta);
+								  //echo "Usuario modificado";
+								//echo "La respuesta es".$respuesta;
+								//redireccionamos a el usuario a la pagina usuarios,para asi lograr que la pagina se refresque,de esta manera evitando el error en el que solo se ve la tabla y permitiendo que no sea para el usuario necesario refrescar la pagina manualmente para ver la edicion de los registros.
+								  //echo "<script>window.location.href = 'controladores/mialertaeditar.php'</script>";
+								echo '<script>
+												swal({
+				                icon: "success",
+				                title: "Buen trabajo!",
+				                text: "La contraseña ha sido modificada correctamente!"
+				                
+				              }).then(function() { 
+		                window.location.href = "usuarios"; 
+		            			});
+											</script>';
+								
 
+							}else{ 
+								//alert("$respuesta");
+								 //echo Console::log($respuesta);
+								 //echo "Usuario no modificado";
+								//echo "$respuesta";
+									//echo "<script>window.location.href = 'controladores/mialertaeditarerror.php'</script>";
+								echo '<script>
+												swal({
+				                icon: "error",
+				                title: "Oops...!",
+				                text: "No se pudo modificar la contraseña exitosamente!"
+				                
+				              }).then(function() { 
+		                window.location.href = "usuarios"; 
+		            			});
+											</script>';
+								
+								
+								
+								
+							 }
+
+		
 
 
 			
 
-		}
-
-
-
-
-
-
 	}
+
+
+
+  }else{
+			echo '<script>
+				     swal({
+					 title: "Recordatorio",
+					 text: "!!Accion solo permitida para Admins!!",
+					 icon: "warning"
+								});
+						</script>';
+					}
+
+
+
+}
 
 
 
@@ -289,6 +426,8 @@ static public function ctrMostrarUsuarios($item,$valor){ //estas dos variables s
 
 	static public function ctrBorrarUsuarios(){
 
+
+	if($_SESSION['perfil'] == "Admin"){	
 
 	if(isset($_GET["idUsuario"])){ //le decimos que si obtenemos idUsuario,que es cuando damos en el boton eliminar,entonces que ejeciute lo siguiente:
 
@@ -308,17 +447,14 @@ static public function ctrMostrarUsuarios($item,$valor){ //estas dos variables s
 			 		//echo "Usuario eliminado";
 			 		//echo "<script>window.location.href = 'usuarios'</script>";
 					echo '<script>
-
 								swal({
                 icon: "success",
                 title: "Buen trabajo!",
                 text: "El usuario ha sido eliminado con exito!"
                 
-
               }).then(function() { 
                 window.location.href = "usuarios"; 
             });
-
 							</script>';
 
 			}else{ 
@@ -330,17 +466,14 @@ static public function ctrMostrarUsuarios($item,$valor){ //estas dos variables s
 				//echo "Usuario no eliminado";
 				//echo "<script>window.location.href = 'usuarios'</script>";
 				echo '<script>
-
 								swal({
                 icon: "error",
                 title: "opss!",
                 text: "No se pudo eliminar el registro de manera exitosa!"
                 
-
               }).then(function() { 
                 window.location.href = "usuarios"; 
             });
-
 							</script>';
 				
 				
@@ -351,12 +484,19 @@ static public function ctrMostrarUsuarios($item,$valor){ //estas dos variables s
 
 		}
 
+	  }else{
+			echo '<script>
+				     swal({
+					 title: "Recordatorio",
+					 text: "!!Accion solo permitida para Admins!!",
+					 icon: "warning"
+								});
+						</script>';
+					}
 
-	}
+   }
 
 }
 
 
   ?>
-
-

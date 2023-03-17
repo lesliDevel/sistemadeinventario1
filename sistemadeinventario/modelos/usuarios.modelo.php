@@ -139,14 +139,14 @@ class ModeloUsuarios{
 		if($validacion->execute()){
 
 
-		$stmt = Conexion::conectar()->prepare("UPDATE $tabla SET nombre = :nombre, usuario = :usuario,password = :password,perfil = :perfil WHERE id = :id"); //decimos aqui que haga un UPDATE,el UPDATE lo que hace es especifar en que tabla se quiere modificar un dato,el set se utiliza en conjunto con el UPDATE para especifcar cual sera el nuevo valor o dato y el WHERE proporciona la condicion especifica que debe cumplir el dato  de referencia del registro que se pretende modificar,en este caso seria el usuario,al ser un dato unico,esta sentencia no es obligatoria,pero si es recomendada.
+		$stmt = Conexion::conectar()->prepare("UPDATE $tabla SET nombre = :nombre, usuario = :usuario,perfil = :perfil WHERE id = :id"); //decimos aqui que haga un UPDATE,el UPDATE lo que hace es especifar en que tabla se quiere modificar un dato,el set se utiliza en conjunto con el UPDATE para especifcar cual sera el nuevo valor o dato y el WHERE proporciona la condicion especifica que debe cumplir el dato  de referencia del registro que se pretende modificar,en este caso seria el usuario,al ser un dato unico,esta sentencia no es obligatoria,pero si es recomendada.
 		//alert($stmt);
 
 		//AQUI BASICAMENTE LO QUE VAMOS A HACER ES EXTRAER CADA UNO DE LOS DATOS DEL ARRAY EN EL ORDEN EN EL QUE FUERON INSERTADOS EN EL ARRAY:
 		$stmt->bindParam(":id",$datos["id"],PDO::PARAM_STR);
 		$stmt->bindParam(":nombre",$datos["nombre"],PDO::PARAM_STR);
 		$stmt->bindParam(":usuario",$datos["usuario"],PDO::PARAM_STR);
-		$stmt->bindParam(":password",$datos["password"],PDO::PARAM_STR);
+		//$stmt->bindParam(":password",$datos["password"],PDO::PARAM_STR);
 		$stmt->bindParam(":perfil",$datos["perfil"],PDO::PARAM_STR);
 
 		if ($stmt->execute()) { //aqui en if decimos que si la variable stmt se ejecuta,que me returne un ok
@@ -195,6 +195,71 @@ class ModeloUsuarios{
 
 
 	}
+
+
+		static public function mdlEditarContrasena($tabla,$datos){ //recibimos las variables tabla y datos
+
+		//$validacion= Conexion::conectar()->prepare("SELECT * FROM $tabla WHERE usuario = :usuario");
+		//$validacion->bindParam(":usuario",$datos["usuario"],PDO::PARAM_STR);
+
+		/*try { //con este try and except,evitamos que la aplicacion pare de ejcutarse,por el error de que por ejemplo,un usuario,ingrese un usuario que ya existe a la hora del registro
+		//aqui decimos que ejecute el resto del codigo solo si la validacion ya fue ejecutada,con esto podemos evitar los duplicados.
+		if($validacion->execute()){*/
+
+
+		$stmt = Conexion::conectar()->prepare("UPDATE $tabla SET password = :password WHERE id = :id"); //decimos aqui que haga un UPDATE,el UPDATE lo que hace es especifar en que tabla se quiere modificar un dato,el set se utiliza en conjunto con el UPDATE para especifcar cual sera el nuevo valor o dato y el WHERE proporciona la condicion especifica que debe cumplir el dato  de referencia del registro que se pretende modificar,en este caso seria el usuario,al ser un dato unico,esta sentencia no es obligatoria,pero si es recomendada.
+		//alert($stmt);
+
+		//AQUI BASICAMENTE LO QUE VAMOS A HACER ES EXTRAER CADA UNO DE LOS DATOS DEL ARRAY EN EL ORDEN EN EL QUE FUERON INSERTADOS EN EL ARRAY:
+		$stmt->bindParam(":id",$datos["id"],PDO::PARAM_STR);
+		$stmt->bindParam(":password",$datos["password"],PDO::PARAM_STR);
+		
+		if ($stmt->execute()) { //aqui en if decimos que si la variable stmt se ejecuta,que me returne un ok
+			
+			//$respuesta = "ok";
+			//echo "$respuesta";
+			//alert($respuesta);
+			//echo Console::log($respuesta);
+			
+			return "ok"; //este ok se returna hacia la funcion ctrEditarUsuarios,se encarga de indicar si todo salio bien o si hubo un error,si todo salio bien,manda este ok y si sale mal,manda el "error"
+
+		} else{ //DE LO CONTRARIO,si no se ejecuta,entonces que returne un error
+
+			//$respuesta = "error";
+			//echo "$respuesta";
+			//echo Console::log($respuesta);
+			//alert($respuesta);
+			return "error";
+
+
+		}
+
+
+		
+		$stmt->close();//con este comando indicamos a la aplicacion web que se debe cerrar la conexion con la base de datos por motivos de seguridad.
+		
+		
+		$stmt->null; //aqui lo que hacemos es dejar vacia la variabke stmt haciendola igual a null,por motivos de seguridad
+		
+		//consejo: aveces si no borramos las cokies del navegador,eso nos puede dar errores
+
+
+	 }
+
+
+
+
+		/*}
+		   catch (Exception $e){
+				echo "Error inesperado,verifique que el usuario ingresado sea diferente a los que estan registrados en la base de datos:".$e;
+					return "error";
+
+			}*/
+
+
+
+
+	
 
 
 	static public function mdlBorrarUsuarios($tabla,$datos){ //la funcion mdlBorrarUsuarios,es llamada por la funcion crtBorrarUsuarios,la cual le envia a esta funcion los parametros tabla,que contiene el nombre de la tabla y datos que contiene el id del usuario que vamos a eliminar.
